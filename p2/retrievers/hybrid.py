@@ -1,25 +1,33 @@
-"""Your hybrid retriever (stage 1): fuse the rankings of two systems into one.
+"""Hybrid retrieval: reciprocal rank fusion (RRF, k = 60) of the bm25 and dense rankings over chunks.
 
-This file is yours to write. Until you write it, build() raises NotImplementedError, and p2 skips
-the system and lists it as to do.
-
-Where the idea is:
-- the 13 lab's pipeline.py in the course repo (class/13-rag-pipeline/lab/starter/pipeline.py):
-  rrf() is reciprocal rank fusion with k = 60, where each document scores the sum of 1 / (60 + rank)
-  over the rankings it appears in, and command_fuse() fuses bm25 with an embedder;
-- get the two systems you fuse with p2.retrievers.build("bm25", corpus, cfg) and
-  build("dense", corpus, cfg), so each index is built once per run;
-- fuse full rankings, not top-10 lists (ask each system for len(corpus.docs) documents), because a
-  document that is 11th in both lists can belong in the fused top 10;
-- order the fused documents with p2.runfile.order(), so equal scores fall in document id order.
-
-If you want `p2 answer` to work with hybrid, also give it search_chunks(text, k): the same fusion over chunk rankings.
+It follows the 13 lab's rrf() (pipeline.py): each chunk scores the sum of 1 / (60 + rank) over the two
+rankings. The two systems come from p2.retrievers.build, so their indexes are built once per run and
+their own search_chunks gives the rankings; nothing about their scoring is repeated here.
 """
 
+from __future__ import annotations
+
+from p2 import retrievers
+from p2.retrievers import ChunkScorer
+
 NEEDS_CLAUDE = False
+PARTS = ("bm25", "dense")
+K = 60
+
+
+class Hybrid(ChunkScorer):
+    def __init__(self, corpus, cfg):
+        super().__init__(corpus, cfg)
+        self.parts = [retrievers.build(name, corpus, cfg) for name in PARTS]
+
+    def score_chunks(self, text: str) -> list[float]:
+        fused = {c.id: 0.0 for c in self.chunks}
+        for part in self.parts:
+            ranking = part.search_chunks(text, len(self.chunks))  # every chunk, best first
+            for rank, (chunk_id, _) in enumerate(ranking, 1):
+                fused[chunk_id] += 1 / (K + rank)
+        return [fused[c.id] for c in self.chunks]
 
 
 def build(corpus, cfg):
-    raise NotImplementedError(
-        "hybrid is not built yet: write p2/retrievers/hybrid.py (the idea is rrf() in the 13 lab's pipeline.py)."
-    )
+    return Hybrid(corpus, cfg)
