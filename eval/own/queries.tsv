@@ -2,3 +2,18 @@
 # origin is hand when you wrote the query yourself and claude when a model drafted it; at least 10 must be hand.
 # class is a word you choose, for example identifier, paraphrase or mixed as in the shared sets; scores are reported per class.
 # Lines that start with # are comments, so delete these lines or keep them, as you like.
+u01	mixed	According to the 2023 USGS report, what percentage of global lithium end use was for batteries?	hand
+u02	mixed	How much did third quarter shipments of crushed stone for consumption increase in 2022 compared to the same quarter in 2021?	hand
+u03	mixed	Which states produced 95% of the salt in the United States in 2024?	hand
+u04	mixed	In 2024, what was the customs value of imported titanium sponge metal?	hand
+u05	paraphrase	What was US feldspar production worth in total in 2024?	hand
+u06	mixed	What was the estimated production of iron slag for the globe in 2024?	hand
+u07	paraphrase	What was the total value of US gemstones, both from nature and lab-made, in 2024?	hand
+u08	paraphrase	What share of reported US vanadium consumption went toward metallurgical uses in 2024?	hand
+u09	paraphrase	Which five US states were the leading peat producers in 2023?	hand
+u10	paraphrase	How much naturally occurring zeolite material was purchased in the US in 2024?	hand
+u11	identifier	2024 US talc producing states	hand
+u12	identifier	2022 US boron leading producer method	hand
+u13	identifier	2022 US cesium net import reliance percentage	hand
+u14	identifier	2022 US aluminum companies operating smelters count	hand
+u15	identifier	2022 US percentage world chromite ore production consumed	hand
