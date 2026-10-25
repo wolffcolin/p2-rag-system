@@ -24,7 +24,7 @@ One sentence, about your own corpus, naming two of your systems and a direction.
 For example: "On my corpus of Kubernetes documentation, `rerank` has a higher MRR@10 than `hybrid`, because the queries are paraphrases that a first-stage fusion ranks too low."
 It should be something you could be wrong about.
 
-TODO: your hypothesis.
+On my 264 document corpus of USGS Mineral Commodity Summaries, rerank will have a higher MRR@10 than hybrid because there are highly similar commodity chapters from different publication years, and Claude reranking may be better at identifying which publication year the query is requesting. 
 
 ---
 
@@ -36,7 +36,7 @@ A difference of 0.02 is usually not worth a reranker's cost in time and tokens.
 In this course, choose a Δ of at least 0.15 unless you argue for a larger one, because a smaller gap takes more queries than one project can judge.
 Call your number Δ (delta).
 
-TODO: your metric and your Δ, with the reason.
+My sole primary metric is MRR@10. My delta (Δ) value is 0.15. I chose 0.15 as my minimum meaningful improvement primarily because a smaller minimum meaningful improvement may not justify the latency and token costs of Claude reranking, and it is the course recommended delta. 
 
 ---
 
@@ -65,7 +65,7 @@ After you score the own corpus, the minimum detectable difference that `uv run p
 It should come out at or below your Δ.
 If it does not, your queries varied more than your stage 1 sd suggested, and you will say so in the outcome.
 
-TODO: your sd, which pair it came from, your n, and the number of queries you will write (at least n).
+My SD was 0.3901. It came from the rerank versus hybrid pair, and it was evaluated on the 20 shared corpus practice queries in stage 1. The metric used was MRR@10. Given this SD and the 0.15 chosen delta, the calculation is n = ((1.96 + 0.84) * 0.3901 / 0.15)^2 = 53.025, meaning the minimum sample size rounds up to 54 queries. In order to provide a buffer for uncertainty, I will choose n = 60 queries as my planned sample size.
 
 ---
 
@@ -82,7 +82,8 @@ This is the default rule, and you can tighten it, but do not loosen it after you
 | around zero, with both ends inside plus or minus Δ | well-powered null: a difference as large as Δ is ruled out |
 | around zero, with an end beyond plus or minus Δ | inconclusive: the gold set could not settle it, and I say so |
 
-TODO: confirm or tighten this rule, and name the two systems and the metric once more.
+I will use the 95% confidence interval reported by `uv run p2 score`, comparing rerank with hybrid on my own corpus. The difference between the two will be MRR@10(rerank) - MRR@10(hybrid). As the table above states, if the interval is entirely above zero in the direction of rerank, my hypothesis is supported by the outcome. If it is entirely on the other side of zero, my hypothesis is contradicted for the gold set. If the interval is around zero, with both ends inside plus or minus delta, this outcome is a well-powered null. If the interval is around zero, with an end beyond plus or minus delta, the outcome is inconclusive, the gold set could not settle this for me. 
+
 
 ---
 
