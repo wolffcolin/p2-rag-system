@@ -67,3 +67,4 @@ u20 0 mcs2024-graphite 1
 u20 0 mcs2025-graphite 1
 u41 0 mcs2025-gypsum 1
 u42 0 mcs2025-magnesium-compounds 1
+u30 0 mcs2023-yttrium 1
