@@ -2283,12 +2283,12 @@
             }
           }
         },
-        "ablation/hybrid_k10": {
-          "run": "runs/own/ablation/hybrid_k10.trec",
+        "ablation/hybrid_k120": {
+          "run": "runs/own/ablation/hybrid_k120.trec",
           "mean": {
             "recall@10": 1.0,
-            "mrr@10": 0.780556,
-            "ndcg@10": 0.837316
+            "mrr@10": 0.763889,
+            "ndcg@10": 0.825013
           },
           "by_class": {
             "mixed": {
@@ -2300,14 +2300,14 @@
             "paraphrase": {
               "n": 20,
               "recall@10": 1.0,
-              "mrr@10": 0.791667,
-              "ndcg@10": 0.844936
+              "mrr@10": 0.766667,
+              "ndcg@10": 0.826483
             },
             "identifier": {
               "n": 20,
               "recall@10": 1.0,
-              "mrr@10": 0.825,
-              "ndcg@10": 0.870825
+              "mrr@10": 0.8,
+              "ndcg@10": 0.852372
             }
           },
           "per_query": {
@@ -2358,8 +2358,8 @@
             },
             "u10": {
               "recall@10": 1.0,
-              "mrr@10": 1.0,
-              "ndcg@10": 1.0
+              "mrr@10": 0.5,
+              "ndcg@10": 0.63093
             },
             "u11": {
               "recall@10": 1.0,
@@ -2373,8 +2373,8 @@
             },
             "u13": {
               "recall@10": 1.0,
-              "mrr@10": 1.0,
-              "ndcg@10": 1.0
+              "mrr@10": 0.5,
+              "ndcg@10": 0.63093
             },
             "u14": {
               "recall@10": 1.0,
@@ -2616,8 +2616,8 @@
             "hand": {
               "n": 15,
               "recall@10": 1.0,
-              "mrr@10": 0.744444,
-              "ndcg@10": 0.809452
+              "mrr@10": 0.677778,
+              "ndcg@10": 0.760243
             },
             "claude": {
               "n": 45,
@@ -2636,18 +2636,18 @@
               "reading": "not distinguishable"
             },
             "mrr@10": {
-              "mean_diff": -0.048148,
+              "mean_diff": -0.114815,
               "ci95": [
-                -0.214815,
-                0.114815
+                -0.274074,
+                0.044444
               ],
               "reading": "not distinguishable"
             },
             "ndcg@10": {
-              "mean_diff": -0.037151,
+              "mean_diff": -0.08636,
               "ci95": [
-                -0.162481,
-                0.082945
+                -0.206613,
+                0.032498
               ],
               "reading": "not distinguishable"
             }
@@ -2908,7 +2908,7 @@
           "reading": "rerank higher"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "bm25",
           "metric": "recall@10",
           "n": 60,
@@ -2922,35 +2922,35 @@
           "reading": "not distinguishable"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "bm25",
           "metric": "mrr@10",
           "n": 60,
-          "mean_diff": -0.004881,
+          "mean_diff": -0.021548,
           "ci95": [
-            -0.088056,
-            0.081628
+            -0.101945,
+            0.061511
           ],
-          "sd_diff": 0.340647,
-          "mdd80": 0.123206,
+          "sd_diff": 0.327289,
+          "mdd80": 0.118375,
           "reading": "not distinguishable"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "bm25",
           "metric": "ndcg@10",
           "n": 60,
-          "mean_diff": 0.006276,
+          "mean_diff": -0.006026,
           "ci95": [
-            -0.057462,
-            0.075096
+            -0.067647,
+            0.057999
           ],
-          "sd_diff": 0.267177,
-          "mdd80": 0.096634,
+          "sd_diff": 0.251979,
+          "mdd80": 0.091137,
           "reading": "not distinguishable"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "dense",
           "metric": "recall@10",
           "n": 60,
@@ -2964,35 +2964,35 @@
           "reading": "not distinguishable"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "dense",
           "metric": "mrr@10",
           "n": 60,
-          "mean_diff": 0.036111,
+          "mean_diff": 0.019444,
           "ci95": [
-            -0.031944,
-            0.105556
+            -0.043056,
+            0.079167
           ],
-          "sd_diff": 0.273331,
-          "mdd80": 0.098859,
+          "sd_diff": 0.242285,
+          "mdd80": 0.08763,
           "reading": "not distinguishable"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "dense",
           "metric": "ndcg@10",
           "n": 60,
-          "mean_diff": 0.038024,
+          "mean_diff": 0.025722,
           "ci95": [
-            -0.015787,
-            0.095238
+            -0.022284,
+            0.073683
           ],
-          "sd_diff": 0.220226,
-          "mdd80": 0.079652,
+          "sd_diff": 0.191797,
+          "mdd80": 0.06937,
           "reading": "not distinguishable"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "hybrid",
           "metric": "recall@10",
           "n": 60,
@@ -3006,35 +3006,35 @@
           "reading": "identical on every query"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "hybrid",
           "metric": "mrr@10",
           "n": 60,
-          "mean_diff": 0.016667,
+          "mean_diff": 0.0,
           "ci95": [
             0.0,
-            0.041667
+            0.0
           ],
-          "sd_diff": 0.09051,
-          "mdd80": 0.032736,
-          "reading": "not distinguishable"
+          "sd_diff": 0.0,
+          "mdd80": null,
+          "reading": "identical on every query"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "hybrid",
           "metric": "ndcg@10",
           "n": 60,
-          "mean_diff": 0.012302,
+          "mean_diff": 0.0,
           "ci95": [
             0.0,
-            0.030756
+            0.0
           ],
-          "sd_diff": 0.066809,
-          "mdd80": 0.024164,
-          "reading": "not distinguishable"
+          "sd_diff": 0.0,
+          "mdd80": null,
+          "reading": "identical on every query"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "rerank",
           "metric": "recall@10",
           "n": 60,
@@ -3048,31 +3048,31 @@
           "reading": "identical on every query"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "rerank",
           "metric": "mrr@10",
           "n": 60,
-          "mean_diff": -0.183333,
+          "mean_diff": -0.2,
           "ci95": [
-            -0.266667,
-            -0.102778
+            -0.280556,
+            -0.119444
           ],
-          "sd_diff": 0.321396,
-          "mdd80": 0.116244,
+          "sd_diff": 0.324458,
+          "mdd80": 0.117351,
           "reading": "rerank higher"
         },
         {
-          "a": "ablation/hybrid_k10",
+          "a": "ablation/hybrid_k120",
           "b": "rerank",
           "metric": "ndcg@10",
           "n": 60,
-          "mean_diff": -0.131752,
+          "mean_diff": -0.144055,
           "ci95": [
-            -0.191717,
-            -0.073267
+            -0.203202,
+            -0.084149
           ],
-          "sd_diff": 0.233443,
-          "mdd80": 0.084433,
+          "sd_diff": 0.235929,
+          "mdd80": 0.085332,
           "reading": "rerank higher"
         }
       ],
@@ -3127,30 +3127,13 @@
         }
       },
       "ablation_queries": {
-        "ablation/hybrid_k10": {
-          "system": "hybrid_k10",
+        "ablation/hybrid_k120": {
+          "system": "hybrid_k120",
           "base": "hybrid",
-          "rule": "BASE = \"hybrid\" in p2/retrievers/hybrid_k10.py",
-          "helped": [
-            {
-              "qid": "u10",
-              "class": "paraphrase",
-              "origin": "hand",
-              "base_rr": 0.5,
-              "rr": 1.0,
-              "change": 0.5
-            },
-            {
-              "qid": "u13",
-              "class": "identifier",
-              "origin": "hand",
-              "base_rr": 0.5,
-              "rr": 1.0,
-              "change": 0.5
-            }
-          ],
+          "rule": "BASE = \"hybrid\" in p2/retrievers/hybrid_k120.py",
+          "helped": [],
           "hurt": [],
-          "unchanged": 58
+          "unchanged": 60
         }
       }
     }
@@ -3231,6 +3214,16 @@
           "input_tokens": 302879,
           "output_tokens": 6972,
           "seconds": 123.1628
+        },
+        {
+          "file": "traces/shared-practice-rerank.r1.jsonl",
+          "system": "rerank",
+          "spans": 6,
+          "calls": 5,
+          "saved": 0,
+          "input_tokens": 79095,
+          "output_tokens": 1883,
+          "seconds": 38.2798
         },
         {
           "file": "traces/shared-test-rerank.jsonl",
@@ -3524,10 +3517,10 @@
           "seconds": 0.6258
         },
         {
-          "file": "traces/retrieval/own-own-ablation-hybrid_k10.jsonl",
-          "system": "hybrid_k10",
+          "file": "traces/retrieval/own-own-ablation-hybrid_k120.jsonl",
+          "system": "hybrid_k120",
           "spans": 60,
-          "seconds": 0.5232
+          "seconds": 0.4812
         },
         {
           "file": "traces/retrieval/own-own-bm25.jsonl",

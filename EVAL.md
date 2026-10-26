@@ -152,7 +152,7 @@ Scores per system on your gold set.
 | dense | 0.967 | 0.744 | 0.799 |
 | hybrid | 1.000 | 0.764 | 0.825 |
 | rerank | 1.000 | 0.964 | 0.969 |
-| ablation/hybrid_k10 | 1.000 | 0.781 | 0.837 |
+| ablation/hybrid_k120 | 1.000 | 0.764 | 0.825 |
 
 60 judged queries; nDCG uses binary labels; a random ranking of the 264 documents would get recall@10 near 0.038.
 <!-- p2:end own -->
@@ -174,9 +174,9 @@ The same scores per query class.
 | rerank | Recall@10 | 1.000 | 1.000 | 1.000 |
 | rerank | MRR@10 | 1.000 | 0.975 | 0.917 |
 | rerank | nDCG@10 | 0.992 | 0.978 | 0.938 |
-| ablation/hybrid_k10 | Recall@10 | 1.000 | 1.000 | 1.000 |
-| ablation/hybrid_k10 | MRR@10 | 0.725 | 0.792 | 0.825 |
-| ablation/hybrid_k10 | nDCG@10 | 0.796 | 0.845 | 0.871 |
+| ablation/hybrid_k120 | Recall@10 | 1.000 | 1.000 | 1.000 |
+| ablation/hybrid_k120 | MRR@10 | 0.725 | 0.767 | 0.800 |
+| ablation/hybrid_k120 | nDCG@10 | 0.796 | 0.826 | 0.852 |
 <!-- p2:end own-classes -->
 
 The same scores for the queries you wrote yourself (`hand`) and the ones a model drafted (`claude`), with the difference between the two groups and its interval.
@@ -197,9 +197,9 @@ Once both groups have queries, the table also says whether `bm25`'s lead over `d
 | rerank | Recall@10 | 1.000 | 1.000 | +0.000 | [+0.000, +0.000] | not distinguishable |
 | rerank | MRR@10 | 1.000 | 0.952 | +0.048 | [+0.011, +0.096] | hand higher |
 | rerank | nDCG@10 | 1.000 | 0.959 | +0.041 | [+0.011, +0.078] | hand higher |
-| ablation/hybrid_k10 | Recall@10 | 1.000 | 1.000 | +0.000 | [+0.000, +0.000] | not distinguishable |
-| ablation/hybrid_k10 | MRR@10 | 0.744 | 0.793 | -0.048 | [-0.215, +0.115] | not distinguishable |
-| ablation/hybrid_k10 | nDCG@10 | 0.809 | 0.847 | -0.037 | [-0.162, +0.083] | not distinguishable |
+| ablation/hybrid_k120 | Recall@10 | 1.000 | 1.000 | +0.000 | [+0.000, +0.000] | not distinguishable |
+| ablation/hybrid_k120 | MRR@10 | 0.678 | 0.793 | -0.115 | [-0.274, +0.044] | not distinguishable |
+| ablation/hybrid_k120 | nDCG@10 | 0.760 | 0.847 | -0.086 | [-0.207, +0.032] | not distinguishable |
 
 The hand and claude queries are different queries, so the interval of hand minus claude comes from resampling the queries within each group (10,000 times), not from pairing them.
 
@@ -239,18 +239,18 @@ Differences between every pair of systems.
 | rerank minus hybrid | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
 | rerank minus hybrid | MRR@10 | +0.200 | [+0.119, +0.281] | 0.117 | rerank higher |
 | rerank minus hybrid | nDCG@10 | +0.144 | [+0.084, +0.203] | 0.085 | rerank higher |
-| ablation/hybrid_k10 minus bm25 | Recall@10 | +0.017 | [+0.000, +0.050] | 0.047 | not distinguishable |
-| ablation/hybrid_k10 minus bm25 | MRR@10 | -0.005 | [-0.088, +0.082] | 0.123 | not distinguishable |
-| ablation/hybrid_k10 minus bm25 | nDCG@10 | +0.006 | [-0.057, +0.075] | 0.097 | not distinguishable |
-| ablation/hybrid_k10 minus dense | Recall@10 | +0.033 | [+0.000, +0.083] | 0.065 | not distinguishable |
-| ablation/hybrid_k10 minus dense | MRR@10 | +0.036 | [-0.032, +0.106] | 0.099 | not distinguishable |
-| ablation/hybrid_k10 minus dense | nDCG@10 | +0.038 | [-0.016, +0.095] | 0.080 | not distinguishable |
-| ablation/hybrid_k10 minus hybrid | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
-| ablation/hybrid_k10 minus hybrid | MRR@10 | +0.017 | [+0.000, +0.042] | 0.033 | not distinguishable |
-| ablation/hybrid_k10 minus hybrid | nDCG@10 | +0.012 | [+0.000, +0.031] | 0.024 | not distinguishable |
-| ablation/hybrid_k10 minus rerank | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
-| ablation/hybrid_k10 minus rerank | MRR@10 | -0.183 | [-0.267, -0.103] | 0.116 | rerank higher |
-| ablation/hybrid_k10 minus rerank | nDCG@10 | -0.132 | [-0.192, -0.073] | 0.084 | rerank higher |
+| ablation/hybrid_k120 minus bm25 | Recall@10 | +0.017 | [+0.000, +0.050] | 0.047 | not distinguishable |
+| ablation/hybrid_k120 minus bm25 | MRR@10 | -0.022 | [-0.102, +0.062] | 0.118 | not distinguishable |
+| ablation/hybrid_k120 minus bm25 | nDCG@10 | -0.006 | [-0.068, +0.058] | 0.091 | not distinguishable |
+| ablation/hybrid_k120 minus dense | Recall@10 | +0.033 | [+0.000, +0.083] | 0.065 | not distinguishable |
+| ablation/hybrid_k120 minus dense | MRR@10 | +0.019 | [-0.043, +0.079] | 0.088 | not distinguishable |
+| ablation/hybrid_k120 minus dense | nDCG@10 | +0.026 | [-0.022, +0.074] | 0.069 | not distinguishable |
+| ablation/hybrid_k120 minus hybrid | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
+| ablation/hybrid_k120 minus hybrid | MRR@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
+| ablation/hybrid_k120 minus hybrid | nDCG@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
+| ablation/hybrid_k120 minus rerank | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
+| ablation/hybrid_k120 minus rerank | MRR@10 | -0.200 | [-0.281, -0.119] | 0.117 | rerank higher |
+| ablation/hybrid_k120 minus rerank | nDCG@10 | -0.144 | [-0.203, -0.084] | 0.085 | rerank higher |
 
 The interval is a paired bootstrap (10,000 resamples of the queries); MDD is the smallest difference this many queries detect 80% of the time. Two systems that score the same on every query have no interval to speak of, so their MDD is shown as -.
 <!-- p2:end own-pairs -->
@@ -269,21 +269,25 @@ Change one thing and keep everything else the same.
 Write your hypothesis here before you run it, in one sentence with a direction: "I expect X to raise MRR@10 on my corpus because Y."
 The run file for it lives in `runs/own/ablation/`.
 
+**Hypothesis (recorded 2026-10-26, before the K=120 run):** Increasing the RRF constant from K=60 to K=120 reduces the relative influence of highly ranked candidates. I hypothesize that this will slightly decrease MRR@10 on the own corpus.
+
+**Earlier attempt, K=10 (disclosed):** The first ablation I tried was `hybrid_k10`, the same fusion with K=10 instead of 60. It was run and scored on this corpus (MRR@10 minus hybrid: +0.017, 95% interval [+0.000, +0.042], not distinguishable) and it passed `uv run p2 check` locally. It then failed the GitHub Actions reproducibility check: `FAIL runs/own/ablation/hybrid_k10.trec matches a fresh run: for u27 it gives mcs2025-gold (rank 6) the score 0.108824 where a fresh run gives it 0.106443`. The cause is not confirmed; we suspect that the lower constant amplifies small cross-environment differences in the retrieval rankings. I retired K=10 (its file and run were removed) and replaced it with K=120. A working-tree draft that rounded the dense scores to 4 decimals before ranking was never committed and went with it. The K=10 numbers are recorded here for transparency and are not used for the claim below.
+
 <!-- p2:begin own-ablation -->
 | Comparison | Metric | Mean difference | 95% interval | MDD | Reading |
 | --- | --- | ---: | ---: | ---: | --- |
-| ablation/hybrid_k10 minus bm25 | Recall@10 | +0.017 | [+0.000, +0.050] | 0.047 | not distinguishable |
-| ablation/hybrid_k10 minus bm25 | MRR@10 | -0.005 | [-0.088, +0.082] | 0.123 | not distinguishable |
-| ablation/hybrid_k10 minus bm25 | nDCG@10 | +0.006 | [-0.057, +0.075] | 0.097 | not distinguishable |
-| ablation/hybrid_k10 minus dense | Recall@10 | +0.033 | [+0.000, +0.083] | 0.065 | not distinguishable |
-| ablation/hybrid_k10 minus dense | MRR@10 | +0.036 | [-0.032, +0.106] | 0.099 | not distinguishable |
-| ablation/hybrid_k10 minus dense | nDCG@10 | +0.038 | [-0.016, +0.095] | 0.080 | not distinguishable |
-| ablation/hybrid_k10 minus hybrid | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
-| ablation/hybrid_k10 minus hybrid | MRR@10 | +0.017 | [+0.000, +0.042] | 0.033 | not distinguishable |
-| ablation/hybrid_k10 minus hybrid | nDCG@10 | +0.012 | [+0.000, +0.031] | 0.024 | not distinguishable |
-| ablation/hybrid_k10 minus rerank | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
-| ablation/hybrid_k10 minus rerank | MRR@10 | -0.183 | [-0.267, -0.103] | 0.116 | rerank higher |
-| ablation/hybrid_k10 minus rerank | nDCG@10 | -0.132 | [-0.192, -0.073] | 0.084 | rerank higher |
+| ablation/hybrid_k120 minus bm25 | Recall@10 | +0.017 | [+0.000, +0.050] | 0.047 | not distinguishable |
+| ablation/hybrid_k120 minus bm25 | MRR@10 | -0.022 | [-0.102, +0.062] | 0.118 | not distinguishable |
+| ablation/hybrid_k120 minus bm25 | nDCG@10 | -0.006 | [-0.068, +0.058] | 0.091 | not distinguishable |
+| ablation/hybrid_k120 minus dense | Recall@10 | +0.033 | [+0.000, +0.083] | 0.065 | not distinguishable |
+| ablation/hybrid_k120 minus dense | MRR@10 | +0.019 | [-0.043, +0.079] | 0.088 | not distinguishable |
+| ablation/hybrid_k120 minus dense | nDCG@10 | +0.026 | [-0.022, +0.074] | 0.069 | not distinguishable |
+| ablation/hybrid_k120 minus hybrid | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
+| ablation/hybrid_k120 minus hybrid | MRR@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
+| ablation/hybrid_k120 minus hybrid | nDCG@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
+| ablation/hybrid_k120 minus rerank | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
+| ablation/hybrid_k120 minus rerank | MRR@10 | -0.200 | [-0.281, -0.119] | 0.117 | rerank higher |
+| ablation/hybrid_k120 minus rerank | nDCG@10 | -0.144 | [-0.203, -0.084] | 0.085 | rerank higher |
 
 The interval is a paired bootstrap (10,000 resamples of the queries); MDD is the smallest difference this many queries detect 80% of the time. Two systems that score the same on every query have no interval to speak of, so their MDD is shown as -.
 <!-- p2:end own-ablation -->
@@ -292,12 +296,7 @@ The queries your ablation helped and hurt, against the system it varies, by reci
 `p2 score` finds that system from a line such as `BASE = "bm25"` in your variant's file, or else from its name: `bm25_lab` varies `bm25`.
 
 <!-- p2:begin own-ablation-queries -->
-ablation/hybrid_k10 against hybrid (BASE = "hybrid" in p2/retrievers/hybrid_k10.py): it helped 2 queries, hurt 0 and left 58 unchanged.
-
-| Query | Class | Origin | hybrid RR | ablation/hybrid_k10 RR | Change | Effect |
-| --- | --- | --- | ---: | ---: | ---: | --- |
-| u10 | paraphrase | hand | 0.500 | 1.000 | +0.500 | helped |
-| u13 | identifier | hand | 0.500 | 1.000 | +0.500 | helped |
+ablation/hybrid_k120 against hybrid (BASE = "hybrid" in p2/retrievers/hybrid_k120.py): it helped 0 queries, hurt 0 and left 60 unchanged.
 
 RR is the reciprocal rank of the first relevant document in the top 10 (0 when none is there), the per-query value behind MRR@10; the queries at the top of each list are the ones to read.
 <!-- p2:end own-ablation-queries -->
@@ -373,6 +372,7 @@ Every trace in traces/ that records a Claude call:
 | traces/answers-rerank.jsonl | rerank | 12 | 24 | 4 | 236,855 | 9,994 | 156.0 | 19,738 | 833 | 13.0 |
 | traces/own-own-rerank.jsonl | rerank | 60 | 60 | 0 | 966,457 | 20,152 | 361.6 | 16,108 | 336 | 6.0 |
 | traces/shared-practice-rerank.jsonl | rerank | 20 | 20 | 2 | 302,879 | 6,972 | 123.2 | 15,144 | 349 | 6.2 |
+| traces/shared-practice-rerank.r1.jsonl | rerank | 6 | 5 | 0 | 79,095 | 1,883 | 38.3 | 13,182 | 314 | 6.4 |
 | traces/shared-test-rerank.jsonl | rerank | 40 | 40 | 0 | 607,657 | 16,202 | 271.9 | 15,191 | 405 | 6.8 |
 
 A span is one query of a run, one question of an answers file, or one claim of a judged file. A saved reply costs nothing now, so it counts the tokens and the seconds of the call that made it.
@@ -395,7 +395,7 @@ Systems that do not call Claude, from traces/retrieval/ on the machine that last
 | Trace | System | Queries | Seconds | Milliseconds per query |
 | --- | --- | ---: | ---: | ---: |
 | traces/retrieval/own-own-ablation-hybrid.jsonl | hybrid | 60 | 0.63 | 10.4 |
-| traces/retrieval/own-own-ablation-hybrid_k10.jsonl | hybrid_k10 | 60 | 0.52 | 8.7 |
+| traces/retrieval/own-own-ablation-hybrid_k120.jsonl | hybrid_k120 | 60 | 0.48 | 8.0 |
 | traces/retrieval/own-own-bm25.jsonl | bm25 | 60 | 0.04 | 0.7 |
 | traces/retrieval/own-own-dense.jsonl | dense | 60 | 0.61 | 10.2 |
 | traces/retrieval/own-own-hybrid.jsonl | hybrid | 60 | 0.90 | 15.0 |
