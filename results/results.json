@@ -3216,16 +3216,6 @@
           "seconds": 123.1628
         },
         {
-          "file": "traces/shared-practice-rerank.r1.jsonl",
-          "system": "rerank",
-          "spans": 6,
-          "calls": 5,
-          "saved": 0,
-          "input_tokens": 79095,
-          "output_tokens": 1883,
-          "seconds": 38.2798
-        },
-        {
           "file": "traces/shared-test-rerank.jsonl",
           "system": "rerank",
           "spans": 40,
