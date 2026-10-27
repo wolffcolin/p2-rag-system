@@ -94,7 +94,20 @@ Which row of the table in section 4 is it?
 Did your gold set reach the size section 3 asked for, and what was the minimum detectable difference that `uv run p2 score` printed?
 What would you do next, and what would you want a reader to take from this?
 
-TODO: your outcome.
+On my USGS Mineral Commodity Summaries gold set rerank had an MRR@10 of 0.964, whereas hybrid had an MRR@10 of 0.764, which is a +0.200 MRR@10 improvement. The paired 95% bootstrap confidence interval for this difference was [+0.119, +0.281].
+
+The whole confidence interval falls above zero, which means this result falls under the supported category in my preregistered decision table in section 4. The result supports my hypothesis that reranking would outperform hybrid on my corpus.
+
+I selected a minimum meaningful difference (delta) value of 0.15. The observed improvement of +0.200 exceeds this delta value. It is important to note that the lower bound of the computed confidence interval, +0.119, is below this threshold. Because of this, I cannot confidently conclude that the improvement was at least 0.15. 
+
+I planned to evaluate 60 queries, providing a buffer above the minimum of 54 queries that I calculated in section 3. I completed all 60 queries. The minimum detectable difference p2 score reported was approximately 0.117, which is below the chosen delta of 0.15. This means my gold set achieved the planned sensitivity for detecting an improvement of my chosen meaningful size.
+
+One limitation is that the rerank MRR@10 of 0.964 is very close to the maximum possible value 1.0. This could mean some of my queries were too easy, limiting my ability to distinguish between high performance retrieval systems and leaving little room to measure further improvements over rerank. Many of my queries explicitly identify a commodity and publication year. The results also are not able to establish that better differentiation between very similar publications from different years caused the improvement over hybrid.
+
+The logical next step would be to pick more challenging queries for a future evaluation, especially queries that require distinguishing similar statistics across different publication years without explicitly naming the desired document. It would also be useful to evaluate the latency and token cost of reranking to determine whether the improvement is worth the costs.
+
+The main conclusion is that Claude reranking substantially improved the ranking of relevant documents on this corpus and gold set. The evidence supports my original directional hypothesis, but the limited corpus scope and near-maximum performance should be considered when interpreting or generalizing the result.
+
 
 ---
 
