@@ -25,7 +25,11 @@ The minimum detectable difference is the smallest gap this many queries could re
 
 For each of `dense`, `hybrid` and `rerank`, one or two sentences: the embedding model, how documents were chunked, what was fused and how, how many candidates the reranker saw, and anything you changed from the 12 and 13 lab code.
 
-TODO: describe your three systems.
+Dense: My dense retriever uses the BAAI/bge-small-en-v1.5 embedding model through FastEmbed. This retriever divides documents into 300-word chunks with 50 words of overlap. It uses cosine similarity between normalized query and chunk embeddings for retrieval. Each document is represented by its highest-    scoring chunk, and the top 10 documents are returned. While the lab 12 implementation embeds entire documents, my implementation embeds individual chunks. 
+
+Hybrid: My hybrid retriever combines BM25 and dense retrieval using reciprocal rank fusion (RRF) with K=60. This retriever combines the full chunk-level rankings from both systems, adding their reciprocal rank scores for each chunk, and selects each document's highest-scoring chunk. This differs from the lab 13 implementation, which performs fusion at the document level. 
+
+Rerank: My rerank retriever takes the top 20 documents from the hybrid retriever and passes the first 600 characters of each document to Claude Sonnet 5. Claude then orders the documents according to their usefulness for answering the query, and the system returns the top 10 in that order. If the ranking returned by Claude is invalid, the system falls back to the original hybrid ordering. This is similar to the Lab 13 reranker, but my implementation uses the chunk-based hybrid system as its first stage. 
 
 ### Practice queries (20)
 
@@ -97,7 +101,15 @@ Which differences are distinguishable from zero and which are not?
 What is the minimum detectable difference at 20 queries, and what does that say about any gap smaller than it?
 Which claim from lecture 12 or 13 did your numbers support, and which did they leave open?
 
-TODO: write what the practice-query intervals let you claim.
+On the 20 shared practice queries, rerank had the highest performance across all three metrics, with a Recall@10 of 0.733, MRR@10 of 0.800, and nDCG@10 of 0.735. Its MRR@10 improvement over hybrid was +0.272, with a paired 95% confidence interval of [+0.111, +0.447]. Since this interval is entirely above zero, rerank performed distinguishably better than hybrid on this gold set. Rerank also had a distinguishable MRR@10 improvement over BM25 and dense. 
+
+The differences between BM25, dense, and hybrid were not distinguishable from zero on any of the three metrics. Hybrid improved MRR@10 over BM25 by only +0.021, with a confidence interval of [-0.148, +0.193]. Because this interval includes zero, the results do not establish that hybrid was better than BM25 on these queries. 
+
+The results for the different classes of queries show different strengths between lexical and semantic retrieval. BM25 performed well on identifier queries, with an MRR@10 of 0.810, but an MRR@10 of 0.000 on paraphrase queries. Dense was comparatively much better on paraphrase queries, with an MRR@10 of 0.714, although it was worse on identifer queries. These observations make sense given that dense retrieval handles vocabulary mismatches better than BM25. However, given the small number of queries in each class, I cannot make strong conclusions.
+
+Minimum detectable difference varies with systems and metrics. For example, the MDD for hybrid versus BM25 on MRR@10 was 0.249, which means this 20-query gold set was not sensitive enough to detect a small improvement between these systems. The MDD for rerank versus hybrid was 0.244. Therefore, differences smaller than the MDD for that pair should not be interpreted as evidence that the systems perform equally. 
+
+Overall, my results support the effectiveness of reranking and demonstrate different strengths of lexical and semantic retrieval, but they do not establish hybrid fusion is substantially better compared to its component systems. 
 
 ---
 
@@ -116,7 +128,23 @@ Then read three in-corpus answers that `uv run p2 verify` passed.
 For each one, open the cited chunk and say whether the quote really supports the claim next to it.
 The check proves a quote is a real piece of the chunk and cannot prove that it supports the claim, so this reading is the part only you can do.
 
-TODO: write your answer choices and your three-answer audit.
+I used rerank to generate answers for the 12 shared questions because it had the highest performance on all three metrics for the shared practice queries. Answer generation works by reranking the top 20 chunks returned by hybrid retrieval, and then passes the top 5 chunks to Claude for the final answer generation. The answer includes claims with chunk identifiers and quotes from the retrieved text.
+
+I did not modify the actual instructions in prompts/answer.txt from Lab 13. The prompt in that version tells Claude to answer only from the provided chunks, cite each claim it makes, and decline any questions that aren't answerable using the retrieved text. Because I did not modify this prompt, I do not have a before-and-after comparison that could show whether changing this prompt could affect either rate.
+
+The answer run verified 7 out of 8 questions that were in the corpus, which is 87.5%. The confidence interval for this result was [0.529, 0.978]. It correctly declined all 4 of the questions that were not answerable with the corpus, with an interval of [0.510, 1.000]. The answers contained 10 citations, and 9 of these passed automated verification. The one that did not pass verification was question a07, where claude used the citation identifier cfr57.9300#0 instead of cfr30-57.9300#0. The factual answer, which was about berm and guardrail height, was supported by the source, but since Claude incorrectly formatted the identifier, verification failed.
+
+I manually examined three of the in-corpus answers that passed automated verification:
+
+- **a01**: The answer provided states that an operator must notify MSHA immediately and within 15 minutes after a fatal accident. I looked at cfr30-50.10#0, which agreed with the answer, it specifies notification within 15 minutes and includes a death at the mine as one of the events triggering this required notification. The two quoted passages support this answer.
+
+- **a05**: The answer states new underground miners must receive a minimum of 40 hours of training before being assigned to work duties. The quoted passage, cfr30-48.5#0, explicitly states that new miners must receive no less than 40 hours of training before being assigned to work duties. The quoted passage supports the number of hours required, however the "underground miner" aspect of the query is not explicitly stated in this passage, but the surrounding context of the passage does support this. 
+
+- **a08**: The answer states that refuge-alternative breathable air must sustain each person for 96 hours. The cited chunk, cfr30-7.506#0, explicitly states that such a refuge must support each person for 96 hours. This chunk supports the answer provided. 
+
+All three of these verified answers were supported by the cited chunk or chunks. However, the automated verifier only establishes whether quotations appear in the cited chunks, and whether the chunk identifiers were cited correctly, not whether the information cited actually logically supports the claims made in the answer. This manual audit is important to evaluate whether the answers are factually supported by the chunk.
+
+The confidence intervals were fairly wide because the experiment only included 8 answerable and 4 unanswerable questions. The results are encouraging, especially the fact that all 4 out-of-corpus questions were refused, but they do not establish that a larger set of questions would achieve the same rates.
 
 ---
 
@@ -128,7 +156,15 @@ What is it, where did it come from, how many documents and how many megabytes, a
 Name the one or two documents you were least sure about and what you decided.
 Say which of the allowed sources in the brief it comes from.
 
-TODO: describe your corpus and its license basis.
+I chose the USGS Mineral Commodity Summaries as my own corpus. This was one of the course-recommended corpus options in the assignment. This collection contains reports about the production, consumption, prices and other economic information associated with different mineral commodities. I selected the 2023, 2024, and 2025 editions, with 88 commodity chapters from each year, giving a total of 264 documents. The resulting text corpus had a size of about 2.2 MB.
+
+The source documents came from the USGS website. The format of the documents was individual PDF chapters. I used a download script Claude generated to collect the PDFs, with intentional delays in downloads. I used the project's ingestion tool to convert these PDF files into Markdown documents. Each document's source URL was recorded in corpora/own/manifest.tsv.
+
+This corpus falls under the allowed category of US federal government works. In the manifest, each document is labeled us-gov-public-domain. I used the `uv run p2 license` tool to check the corpus. The report generated by this tool (LICENSES.md) showed that all 264 documents passed, there were no failures, and none of the documents were flagged.
+
+One consideration in terms of licensing with the USGS documents is that these works can contain third party copyrighted material, especially photographs. These third party material may not be public domain. However, my corpus contains the extracted text of commodity chapters, and did not include any images. The licensing scan did not return any problematic notices in these chapters, but this automated check cannot guarantee that every piece of material is public domain and free of copyright restrictions.
+
+I had small concerns with some of the documents in the ingested corpus. `mcs2023-arsenic.md` had a faulty ingestion, with the author line of the document being incorrectly extracted as the title, rather than the commodity name. I decided to retain this document anyway, since the rest of the text was not poorly extracted, and the filename identifies the commodity being discussed.
 
 ### The gold set
 
@@ -137,7 +173,15 @@ How did you decide that a document is relevant: write your relevance rule in two
 How did you find candidates (the systems' top 10, a keyword search, reading), and did you read every document before you labeled it?
 Your labels are binary (`rel` 1) unless you say otherwise: if you use graded labels, declare the scale here, for example 2 means the document answers the query fully and 1 means it helps.
 
-TODO: describe your gold set and your relevance rule.
+I had 60 queries in my gold set. I hand-wrote 15 of them, and drafted the remaining 45 using Claude. I chose an even divide of query classes, with 20 queries for each of paraphrase, identifier, and mixed queries. I chose these three classes to evaluate how the retrieval system performs with different types of queries that reflect real world use, with some containing specific identifiers and terminology, some with paraphrased text that matches the meaning of a passage but with different wording, and some that combine these characteristics. 
+
+My relevance judgements were binary, with a 1 indicating the document is relevant to the query. I considered a document relevant if it contained sufficient information to answer the query, including any applicable commodity or publication year requirements. The Mineral Commodity Summaries sometimes report data from the preceding year, so I distinguished between the publication year of a document and the year of the information requested. Because of this, I considered documents from other years relevant if they explicitly contained the historical information needed for the query.
+
+For the 45 queries generated by Claude, I first used Claude to identify candidate documents from the corpus that could be relevant. Claude provided documents it was fairly certain were relevant, and for some queries additional documents that it thought could be relevant but was less certain about. I then manually reviewed all 45 queries, and checked the higher confidence candidate documents to determine whether they were actually relevant and could answer the query. I only added documents to `qrels.txt` if I thought they were relevant. 
+
+I performed a second pass over the candidates that Claude provided to evaluate the less certain candidates. Most of these less certain candidates were for the same commodity as the more certain ones, but from different publication years. I only added relevance judgements if the documents could accurately answer the query with the correct referenced year, either for publication or reporting years. This process resulted in 66 positive relevance judgements for 60 queries, with some queries having multiple relevant documents. 
+
+A more exhaustive way to produce relevance judgements for each query would be to read every document in the corpus for every query, ensuring nothing relevant is missed. My approach was to review candidate documents most likely to be relevant, identified by Claude. One limitation of this approach is that Claude may have missed some documents that were relevant to a query. Although my manual review helped ensure that the positive relevance judgement was accurate for that query, it doesn't guarantee that the gold set includes every relevant document for one query. 
 
 ---
 
@@ -259,7 +303,15 @@ Which differences are distinguishable and which are not, at your gold-set size?
 Do the `hand` queries and the `claude` queries tell the same story?
 Did your prediction in `DECISIONS.md` prompt 1 hold?
 
-TODO: write what your own-corpus intervals let you claim.
+Rerank performed the best overall, with an MRR@10 of 0.964, and an nDCG@10 of 0.969. This represents an improvement over hybrid by +0.200 MRR@10, with a paired 95% confidence interval of [+0.119, +0.281]. The MDD for rerank versus hybrid was 0.117, which means this query set was sufficiently sensitive to detect observed improvement. This improvement is statistically distinguishable from zero, as the confidence interval is entirely above zero. Rerank's nDCG@10 improvement over hybrid was +0.144, with a 95% confidence interval of [+0.084, +0.203]. The differences between BM25, dense, and hybrid were not statistically distinguishable from zero on these metrics. Both rerank and hybrid achieved perfect Recall@10, but rerank placed relevant documents much higher.
+
+In terms of performance across queries, BM25 performed best on identifier queries, with an MRR@10 of 0.967, compared to 0.917 for rerank and 0.679 for dense. Since BM25 relies on lexical matching, this makes sense, as identifier queries contain specific terminology from the documents. Dense performed much better than BM25 on paraphrase queries, with an MRR@10 of 0.817 compared to 0.606. This makes sense given that dense is better at finding semantically similar information even if the wording is different in the document. Rerank performed best on paraphrase and mixed queries, with an MRR@10 of 0.975 and 1.000 respectively. However, the results for individual query classes do not have confidence intervals, so these observations are more descriptive than statistically distinguishable differences.
+
+There were some interesting differences between the hand-written and Claude-written queries. Dense performed better on the Claude written queries, with an MRR@10 of 0.800 compared to 0.578 on the hand-written queries. The confidence interval for the difference between hand-written and Claude-written queries was [-0.411, -0.030], which indicates a statistically distinguishable difference. Rerank was slightly better on hand-written queries, with an MRR@10 of 1.000 compared to 0.952 on Claude-written queries. This difference was also distinguishable from zero, with a confidence interval of [+0.011, +0.096]. The difference between hand-written and Claude-written queries for BM25 and hybrid were not distinguishable from zero.
+
+Given that Claude-written queries are generated from the source documents, they are more likely to contain specific keywords, which might favor a keyword-based retrieval like BM25. My results did not support this. BM25 had an MRR@10 improvement of +0.289 over dense on my hand-written queries, but it performed slightly worse on Claude-written queries, with a difference of -0.042. The difference between BM25's relative advantage on Claude and hand-written queries was -0.331, with a 95% confidence interval of [-0.551, -0.104]. This implies that BM25 had a statisically distinguishably larger advantage over dense on the hand-written queries than on Claude-written queries. It is important to note that the two groups of queries generally contained different questions about different commodities, so this cannot establish whether the method of query generation caused these differences. 
+
+My preregistered prediction in PREREG.md was that rerank would perform better than hybrid on MRR@10 for my own corpus. This prediction is supported by my results, with the observed improvement of +0.200 with a 95% confidence interval of [+0.119, +0.281]. Since this interval is entirely above zero, my prediction is supported. This observed improvement also exceeds the minimum meaningful difference I chose of 0.15. The MDD of 0.117 is also below this threshold. However, since the lower bound of this confidence interval, +0.119, is below 0.15, I cannot conclude that the actual improvement was at least that large. Another thing to note is that rerank's MRR@10 of 0.964 is close to the maximum possible value of 1.000, which means further measurable improvement on this gold set is limited.
 
 ---
 
@@ -305,7 +357,13 @@ What did you change, what happened, and does the interval support the claim you 
 If the result is not distinguishable, say what size of effect your gold set could have seen.
 Read the queries at the top of each list in the second table, and say whether your change explains them.
 
-TODO: write the ablation: the one change, the hypothesis, the result and the claim.
+I increased the reciprocal rank fusion (RRF) constant in the hybrid retriever from K=60 to K=120, keeping the BM25 and dense retrievers and all other settings constant. Increasing this K value reduces how much relative influence the highly ranked results have compared to the lower ranked results. My hypothesis was that this would slightly decrease MRR@10 on my own corpus.
+
+The results did not support this hypothesis. Both the K=60 and K=120 versions of the hybrid retriever had an identical Recall@10 value of 1.000, MRR@10 value of 0.764 and nDCG@10 of 0.825. The paired 95% confidence interval for all three metrics was [+0.000, +0.000] because the differences per-query metric were all zero. MDD was not reported because of the lack of any variation in these differences. 
+
+The own-ablation-queries table reported that the change didn't help or hurt any queries. All 60 were left unchanged. However, the top 10 rankings differed for 47 of the queries. The changes occured at ranks 4-10, while the position for judged relevant documents did not change. As an example, on query u16, two irrelevant documents switched positions at ranks 4 and 5, while the helium document judged relevant stayed at rank 1. This explains why the retrieval metrics were not different between versiosn of retriever despite some difference in rankings.
+
+These results show that increasing K from 60 to 120 did not affect the retrieval performance on my gold set that I measured. They do not, however, establish that the two versions of this retriever would be the same on other queries or corpora. A useful next step would be to run an experiment that tests a wider range of K values while still keeping other settings fixed to see if relevant documents change positions or if evaluation metrics improve. 
 
 ---
 
@@ -315,10 +373,18 @@ Pick the queries where your best system on your own corpus failed: the relevant 
 Take at least five, and read what the system returned next to what was relevant.
 Then sort the failures by cause, for example a vocabulary mismatch, near-duplicate documents, a chunk that cut the answer in half, a query that is ambiguous, or a label that was wrong, because sometimes the gold set is what failed.
 
+Since rerank achieved a Recall@10 of 1.000 on my gold set, none of the judged relevant documents were missing from the top 10. Because of this, I analyzed cases where relevant documents were ranked lower than expected, and one possible relevance label error.
+
 | qid | what the best system returned | what was relevant | cause | what you would try |
 |---|---|---|---|---|
+|u22|Ranked mcs2023-lead first and mcs2023-zinc second|mcs2023-zinc|Relevant information appears after the first 600 characters shown to Claude. The lead document mentions zinc mines in Alaska, which could have influenced the ranking.|Provide the most relevant passage from each document rather than its first 600 characters.|
+|u25|Ranked mcs2025-nickel, mcs2024-nickel second, and mcs2023-nickel third.|mcs2023-nickel contains the $115 million Bipartisan Infrastructure Law project.|The relevant sentence is also after the first 600 characters, and the nickel documents from other years were ranked higher.|Increase the excerpt length or select passages that best match.|
+|u44|Ranked mcs2023-molybdenum first and mcs2024-molybdenum second.|mcs2024-molybdenum reports the import sources for 2019-2022|The different year editions are almost duplicates, but the 2023 version covered 2018-2021 instead. The relevant reporting period was outside Claude's excerpt. |Include publication year and relevant import source passages for reranking|
+|u30|Ranked mcs2023-rare-earths first, placed mcs2023-yttrium sixth, below documents from several years.|Both mcs2023-rare-earths and mcs2023-yttrium contain China's 2022 mining quota for rare earths.|The relevant quota information in the yttrium document was beyond the excerpt Claude saw.|Provide passages containing the quota figure and explicitly identify desired reporting years.|
+|u46|Ranked mcs2025-niobium first, and mcs2024-niobium second.|mcs2024-niobium was labeled relevant but mcs2025-niobium was what contained the figures wanted.|This is likely a relevance label error, as the 2025 document reports the 2024 figure that was requested, while the labeled document contained different figures|Review relevance judgements against source text and correct it if confirmed. |
 
-TODO: add one row for each failure you analyzed, and write two or three sentences on the pattern you see across them.
+The biggest issue across these was that a lot of the relevant information appeared beyond the first 600 characters provided to the reranker. Another issue was that documents for the same commodity across different reporting years were very similar, which made it difficult to distinguish the correct reporting period. One fix for this could be to provide query-relevant passages and more clear year information. I could test this by checking whether the judged relevant documents move higher without reducing performance for other queries. 
+
 
 ---
 
@@ -331,7 +397,20 @@ Did the winner change between the shared corpus and yours?
 Why, or why not: what is different about the two collections (document length, vocabulary, identifiers, near-duplicates, how the queries were written), and which of your explanations did you test and which are guesses?
 Say what 20 queries on one side and your gold-set size on the other cannot support.
 
-TODO: write the cross-corpus comparison.
+The best performing system was the same for both corpora. Rerank achieved the highest MRR@10 and nDCG@10 on both the shared and own corpora. The following results are copied from the generated tables in sections 1 and 4. 
+
+| System | Shared MRR@10 | Own MRR@10 |
+|---|---|---|
+|BM25|0.507|0.785|
+|Dense|0.562|0.744|
+|Hybrid|0.528|0.764|
+|Rerank|0.800|0.964|
+
+On the shared corpus, rerank improved MRR@10 over hybrid by +0.272. The paired 95% confidence interval for this value was [+0.111, +0.447], and it had an MDD of 0.244. On my corpus, the improvement was +0.200, with an interval of [+0.119, +0.281] and an MDD of 0.117. Both of these improvements are statistically distinguishable from zero. The differences between BM25, dense and hybrid were not distinguishable from zero on either corpus.
+
+The two corpora were quite different. The shared corpus consisted of 2,484 documents that were relatively short, with a median length of 68 words, while my corpus contained 264 mineral commodity chapters that had a median length of about 1,062 words. The reranker only examined the first 600 characters of each document, which was the entire document for about 60% of the shared corpus and none of my USGS corpus. My failure analysis confirmed several cases where relevant information was not in the 600 character excerpt handed to the reranker. The queries for the shared corpus contained regulation and standard identifiers, whereas my queries used commodity names, publication years and numerical information. My corpus also contained similar chapters from three publication years, which sometimes led to the reranker ranking the wrong year's document higher than it should have. 
+
+The shared evaluation consisted of only 20 queries, whereas my corpus had 60. Because of this, the shared corpus had less sensitivity to smaller differences, which can be seen in the larger MDD for rerank versus hybrid. Since the corpora use different documents, relevance judgements and queries, the higher score on my own corpus do not mean the systems perform better on USGS documents generally. Additionally, I cannot conclude that the difference between rerank's improvement on the two corpora was statistically significantor caused by any corpus characteristic.
 
 ---
 
@@ -422,7 +501,11 @@ _No stretch runs yet (stretch option 5): `uv run p2 run --corpus own --queries e
 
 ### Your stretch
 
-Write the five things here.
+I completed the 598E rider, which consisted of three additional reranker runs that were saved to runs/shared/rerank.practice.r1.trec through r3.trec, three additional answer-generation runs saved to answers/shared/rerank.r1.json through .r3.json. I also preregistered in the PREREG.md document. The results of these runs are reported in the section 9 repeats table. 
+
+Rerank's MRR@10 improvement over hybrid remained +0.272 across all three repeats, with a 95% confidence interval of [+0.111, 0.447]. This supports a consistent improvement on these queries, but it doesn't necessarily guarantee the same performance on future runs. The preregistered evaluation also supported reranks improvement, but it wasn't able to establish that the actual gain was at least 0.15. 
+
+For a follow-up experiment, I would repeat the reranker on my own corpus with the same configuration and queries. If the MRR@10 improvement over hybrid was consistently positive with confidence intervals above zero, there would be evidence the result is stable across runs. 
 
 ---
 
@@ -472,7 +555,9 @@ Each repeat answers the same questions, so the repeats are not independent trial
 Does the reranker's gain over its first stage survive the run-to-run variation?
 Write what the spread is, how it compares with the gain, and what the Wilson intervals on the verified share and the declined share say about 8 and 4 questions.
 
-598E: write the repeats result here.
+Across the three experiments on the reranker, Recall@10 and MRR@10 didn't change. Both had a range of 0.000, while nDCG@10 had a range of 0.011. Rerank's MRR@10 improvement over hybrid remained +0.272 in all three repeats. The paired 95% confidence interval was [+0.111, +0.447], which means the improvment was distinguishable from zero across all three repeats.
+
+All three answer-generation repeats verified 8 out of 8 in-corpus answers, and the Wilson 95% interval was [0.676, 1.000]. All three correctly declined 4 out of 4 out-of-corpus questions, with an interval of [0.510, 1.000]. These intervals are relatively wide, and they show that the small number of questions limits what can be concluded about the actual verification and refusal rates. Since these repeats used the same queries, they aren't indepedant trials and shouldn't be pooled. 
 
 ### The pre-registered claim
 
@@ -480,4 +565,6 @@ The claim, the smallest effect, the gold-set size and the test are in `PREREG.md
 Here, say whether you followed the plan, what the interval turned out to be, and what that means.
 The outcome section of `PREREG.md` holds the short version.
 
-598E: write the claim and its outcome here.
+I followed the plan I laid out in PREREG.md, which I commited before my relevance judgements. I planned to evaluate all 60 of the queries in my gold set, and completed all 60 using the planned paired confidence interval test. My hypothesis was that rerank would outperform the hybrid on MRR@10, with a minimum meaningful difference of 0.15.
+
+The observed improvement was +0.200 MRR@10, with a paired 95% confidence interval of [+0.119, +0.281], and an MDD of 0.117. Since this interval is entirely above zero, my directional hypothesis was supported by this outcome. However, the lower bound of this range is below 0.15, my minimum meaningful difference. Additionally, rerank's MRR@10 of 0.964 is close to the maximum possible value. This limits how much further improvement this gold set could measure. 
