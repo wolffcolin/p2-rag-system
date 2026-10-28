@@ -501,11 +501,7 @@ _No stretch runs yet (stretch option 5): `uv run p2 run --corpus own --queries e
 
 ### Your stretch
 
-I completed the 598E rider, which consisted of three additional reranker runs that were saved to runs/shared/rerank.practice.r1.trec through r3.trec, three additional answer-generation runs saved to answers/shared/rerank.r1.json through .r3.json. I also preregistered in the PREREG.md document. The results of these runs are reported in the section 9 repeats table. 
-
-Rerank's MRR@10 improvement over hybrid remained +0.272 across all three repeats, with a 95% confidence interval of [+0.111, 0.447]. This supports a consistent improvement on these queries, but it doesn't necessarily guarantee the same performance on future runs. The preregistered evaluation also supported reranks improvement, but it wasn't able to establish that the actual gain was at least 0.15. 
-
-For a follow-up experiment, I would repeat the reranker on my own corpus with the same configuration and queries. If the MRR@10 improvement over hybrid was consistently positive with confidence intervals above zero, there would be evidence the result is stable across runs. 
+rider
 
 ---
 
